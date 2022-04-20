@@ -1,0 +1,1 @@
+Consultando CEP com javscript puro pelo serviço da empresa "ViaCEP" => https://viacep.com.br/

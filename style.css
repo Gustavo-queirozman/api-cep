@@ -1,0 +1,28 @@
+body {
+  display: flex;
+  margin: 0px;
+  padding: 0px;
+  align-items: center;
+  justify-content: center;
+}
+div.column,
+form {
+  width: 530px;
+  text-align: center;
+}
+h1 {
+  width: 100%;
+}
+.row {
+  display: flex;
+  width: 200px;
+  justify-content: space-between;
+}
+.row-submit {
+  display: flex;
+  justify-content: center;
+}
+input {
+  margin: 0px 5px 20px 5px;
+  height: 35px;
+}
