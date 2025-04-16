@@ -1,40 +1,223 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css">
-    <title>Consumindo API CEP</title>
-  </head>
-  <body>
-    <div class="column" style="width: max-content;">
-      <h1>Cadastro</h1>
-      <form method="post">
-
-        <div class="row" style="width: 560px;">
-          <input type="text" id="nome" name="nome" placeholder="Nome" style="width: 100%;"/>
-          <input type="text" id="email" name="email" placeholder="Email" style="width: 100%;"/>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadastro Smart - Consulta CEP</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Cadastro Smart</h1>
+    
+    <form id="cadastroForm" novalidate>
+      <div class="form-section">
+        <div class="section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          Informações Pessoais
         </div>
-
-        <div class="row">
-          <input type="text" id="cep" placeholder="CEP" name="cep" />
-          <input type="text" id="endereco" placeholder="Endereço" name="endereco" />
-          <input type="text" id="numero" placeholder="Número" name="numero" />
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nome">Nome Completo</label>
+            <input type="text" class="form-control" id="nome" name="nome" required>
+            <div class="invalid-feedback">Por favor, informe seu nome completo.</div>
+          </div>
         </div>
-
-        <div class="row">
-          <input type="text" id="bairro" placeholder="Bairro" name="bairro" />
-          <input type="text" id="cidade" placeholder="Cidade" name="cidade" />
-          <input type="text" id="estado" placeholder="Estado" name="estado" />
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+            <div class="invalid-feedback">Por favor, informe um email válido.</div>
+          </div>
+          <div class="form-group">
+            <label for="telefone">Telefone</label>
+            <input type="tel" class="form-control" id="telefone" name="telefone" placeholder="(00) 00000-0000">
+          </div>
         </div>
-
-        <div class="row-submit">
-          <input type="submit" value="Salvar"/>
+      </div>
+      
+      <div class="form-section">
+        <div class="section-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          Endereço
         </div>
-      </form>
-    </div>
+        
+        <div class="form-row">
+          <div class="form-group" style="flex: 0 0 120px;">
+            <label for="cep">CEP</label>
+            <div style="position: relative;">
+              <input type="text" class="form-control" id="cep" name="cep" placeholder="00000-000" maxlength="9" required>
+              <span class="loading-indicator" id="cepLoading"></span>
+            </div>
+            <div class="invalid-feedback">CEP inválido.</div>
+          </div>
+          <div class="form-group" style="flex: 2;">
+            <label for="endereco">Endereço</label>
+            <input type="text" class="form-control" id="endereco" name="endereco" required>
+            <div class="invalid-feedback">Endereço é obrigatório.</div>
+          </div>
+          <div class="form-group" style="flex: 0 0 100px;">
+            <label for="numero">Número</label>
+            <input type="text" class="form-control" id="numero" name="numero" required>
+            <div class="invalid-feedback">Obrigatório.</div>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="complemento">Complemento</label>
+            <input type="text" class="form-control" id="complemento" name="complemento" placeholder="Opcional">
+          </div>
+          <div class="form-group">
+            <label for="bairro">Bairro</label>
+            <input type="text" class="form-control" id="bairro" name="bairro" required>
+            <div class="invalid-feedback">Bairro é obrigatório.</div>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="cidade">Cidade</label>
+            <input type="text" class="form-control" id="cidade" name="cidade" required>
+            <div class="invalid-feedback">Cidade é obrigatória.</div>
+          </div>
+          <div class="form-group" style="flex: 0 0 100px;">
+            <label for="estado">Estado</label>
+            <input type="text" class="form-control" id="estado" name="estado" required>
+            <div class="invalid-feedback">Estado é obrigatório.</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-footer">
+        <button type="submit" class="btn btn-block">
+          Salvar Cadastro
+        </button>
+      </div>
+    </form>
+  </div>
 
-    <script src="./script.js"></script>
-  </body>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const cepInput = document.getElementById('cep');
+      const form = document.getElementById('cadastroForm');
+      const cepLoading = document.getElementById('cepLoading');
+      
+      // Máscara para o CEP
+      cepInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 5) {
+          value = value.substring(0, 5) + '-' + value.substring(5, 8);
+        }
+        e.target.value = value;
+        
+        // Consulta o CEP quando atingir 8 dígitos
+        if (value.replace('-', '').length === 8) {
+          consultarCEP(value);
+        }
+      });
+      
+      // Função para consultar o CEP
+      function consultarCEP(cep) {
+        cepLoading.style.display = 'flex';
+        cepInput.classList.remove('is-invalid');
+        
+        // Remove qualquer caractere que não seja número
+        cep = cep.replace(/\D/g, '');
+        
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+          .then(response => response.json())
+          .then(data => {
+            cepLoading.style.display = 'none';
+            
+            if (data.erro) {
+              cepInput.classList.add('is-invalid');
+              return;
+            }
+            
+            // Preenche os campos com os dados retornados
+            document.getElementById('endereco').value = data.logradouro;
+            document.getElementById('bairro').value = data.bairro;
+            document.getElementById('cidade').value = data.localidade;
+            document.getElementById('estado').value = data.uf;
+            
+            // Foca no campo número após preencher o endereço
+            document.getElementById('numero').focus();
+          })
+          .catch(error => {
+            console.error('Erro ao consultar CEP:', error);
+            cepLoading.style.display = 'none';
+            cepInput.classList.add('is-invalid');
+          });
+      }
+      
+      // Validação do formulário
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (!validateForm()) {
+          return;
+        }
+        
+        // Simulação de envio bem-sucedido
+        alert('Cadastro realizado com sucesso!');
+        form.reset();
+      });
+      
+      // Função para validar o formulário
+      function validateForm() {
+        let isValid = true;
+        const requiredFields = form.querySelectorAll('[required]');
+        
+        requiredFields.forEach(field => {
+          field.classList.remove('is-invalid');
+          
+          if (!field.value.trim()) {
+            field.classList.add('is-invalid');
+            isValid = false;
+          }
+          
+          // Validação específica para email
+          if (field.type === 'email' && field.value) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(field.value)) {
+              field.classList.add('is-invalid');
+              isValid = false;
+            }
+          }
+        });
+        
+        return isValid;
+      }
+      
+      // Validação em tempo real ao perder o foco
+      form.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('blur', function() {
+          if (this.hasAttribute('required') && !this.value.trim()) {
+            this.classList.add('is-invalid');
+          } else {
+            this.classList.remove('is-invalid');
+          }
+          
+          // Validação de email em tempo real
+          if (this.type === 'email' && this.value) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(this.value)) {
+              this.classList.add('is-invalid');
+            }
+          }
+        });
+      });
+    });
+  </script>
+</body>
 </html>
